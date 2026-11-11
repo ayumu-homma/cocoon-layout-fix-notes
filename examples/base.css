@@ -1,0 +1,115 @@
+
+/* 検証用の共通スタイル。CocoonそのもののCSSを複製したものではない。
+   投稿本文の幅を、デスクトップでおよそ 720px に見立てている。 */
+:root {
+  --text: #222;
+  --muted: #555;
+  --line: #ddd;
+  --accent: #1B3A4B;
+  --bg: #f6f6f6;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Sans", sans-serif;
+  line-height: 1.7;
+}
+#container { background: #fff; }
+.site-header {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 16px;
+}
+.site-header .kicker {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.site-header .site-name {
+  margin: 2px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+}
+#content {
+  padding: 16px;
+}
+#main {
+  max-width: 720px;
+  margin: 0 auto;
+  overflow: visible; /* はみ出しを隠さず、再現できるようにする */
+}
+article h1 {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+.lead {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+.entry-content h2 {
+  font-size: 1.15rem;
+  margin: 2em 0 0.6em;
+  border-left: 4px solid var(--accent);
+  padding-left: 8px;
+}
+.entry-content p { margin: 0 0 1em; }
+/* 意図的に、画像の max-width を書かない（崩れの再現用） */
+.wide-img {
+  width: 1200px;
+  max-width: none;
+  height: auto;
+  display: block;
+}
+table.wide-table {
+  border-collapse: collapse;
+  width: 980px; /* 本文幅を超える指定 */
+}
+table.wide-table th,
+table.wide-table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+table.wide-table th { background: #eef3f6; }
+#measure {
+  margin: 24px 0 8px;
+  padding: 10px 12px;
+  background: #fff8e1;
+  border: 1px solid #e6d589;
+  font-size: 13px;
+  font-family: "Noto Sans Mono CJK JP", ui-monospace, monospace;
+}
+.footer-note {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 16px 24px;
+}
+
+/* 説明用スクリーンショット: ?frame=375 で、375px の枠からのはみ出しを見えるようにする */
+body.capture-375 {
+  background: #cfd8dc;
+  width: 1280px;
+  margin: 0;
+  padding: 16px 16px 24px;
+}
+body.capture-375 .frame-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #333;
+}
+body.capture-375 #container {
+  width: 375px;
+  outline: 3px dashed #c62828;
+  outline-offset: 0;
+  overflow: visible;
+  background: #fff;
+  position: relative;
+}
+.frame-label { display: none; }

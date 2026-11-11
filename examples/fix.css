@@ -1,0 +1,34 @@
+
+/*
+  検証用ページ向けの最小修正。
+  WordPress（Cocoon）では「外観 > カスタマイズ > 追加CSS」に貼る想定。
+  このファイルは検証用 HTML で効果を確認したものであり、
+  特定の公開サイト（ayushio.blog を含む）へ適用済みだという主張ではない。
+*/
+
+/* 1. 幅指定の大きい画像を、本文幅に収める */
+.entry-content img,
+.entry-content .wide-img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 2. 空白のない長い文字列（長いURLなど）を折り返す */
+.entry-content a,
+.entry-content p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* 3. 広い表は、ページ全体を押さず、枠の中だけ横スクロールする */
+.entry-content .table-scroll {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.entry-content .table-scroll table.wide-table {
+  width: auto;
+  min-width: 100%;
+}

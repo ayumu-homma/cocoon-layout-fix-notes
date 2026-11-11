@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>表示崩れの検証用ページ（修正前）</title>
+  <link rel="stylesheet" href="base.css">
+  
+</head>
+<body>
+  <p class="frame-label">赤い破線の枠は 375px（スマートフォン幅）です。枠の右へ出ている部分が、はみ出しです。</p>
+  <div id="container">
+    <header class="site-header">
+      <p class="kicker">ローカルの検証用ページです。顧客サイトの画面ではありません。ayushio.blog の現状を写したものでもありません。</p>
+      <p class="site-name">Cocoon 風の本文幅での表示確認（修正前）</p>
+    </header>
+    <div id="content">
+      <main id="main">
+        <article>
+          <h1>本文からはみ出す3つの典型例</h1>
+          <p class="lead">本文エリアの幅はおよそ 720px に見立てています。スマートフォン幅（375px）とパソコン幅（1280px）で確認します。</p>
+          <div class="entry-content">
+            <h2>1. 幅を指定した大きい画像</h2>
+            <p>幅 1200px の画像を、本文より大きく表示する指定にしています。追加の max-width が無いと、画面の右へはみ出します。</p>
+            <p><img class="wide-img" src="../assets/dummy-1200.png" width="1200" height="240" alt="1200ピクセル幅のダミー画像（検証用）"></p>
+
+            <h2>2. 空白のない長い URL</h2>
+            <p>詳細は
+              <a href="https://example.com/sample/this-is-a-very-long-dummy-path-without-spaces-that-overflows-the-content-column-on-small-screens">https://example.com/sample/this-is-a-very-long-dummy-path-without-spaces-that-overflows-the-content-column-on-small-screens</a>
+              を見てください（実在しないパスです）。
+            </p>
+
+            <h2>3. 列の多い表</h2>
+            <p>列が多く、セルで折り返さない表です。修正後は表の外側だけ横スクロールし、ページ全体は押さないようにします。</p>
+            
+        <table class="wide-table">
+          <thead>
+            <tr>
+              <th>項目A</th><th>項目B</th><th>項目C</th><th>項目D</th>
+              <th>項目E</th><th>項目F</th><th>項目G</th><th>項目H</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ダミー値 01</td><td>ダミー値 02</td><td>ダミー値 03</td><td>ダミー値 04</td>
+              <td>ダミー値 05</td><td>ダミー値 06</td><td>ダミー値 07</td><td>ダミー値 08</td>
+            </tr>
+            <tr>
+              <td>ダミー値 11</td><td>ダミー値 12</td><td>ダミー値 13</td><td>ダミー値 14</td>
+              <td>ダミー値 15</td><td>ダミー値 16</td><td>ダミー値 17</td><td>ダミー値 18</td>
+            </tr>
+          </tbody>
+        </table>
+    
+          </div>
+          <p id="measure">（幅の測定を準備しています）</p>
+        </article>
+      </main>
+    </div>
+    <p class="footer-note">公開用サンプル / 受注成果物ではありません。</p>
+  </div>
+  <script>
+    function applyFrame() {
+      var params = new URLSearchParams(location.search);
+      if (params.get("frame") === "375") {
+        document.body.classList.add("capture-375");
+      }
+    }
+    function measure() {
+      var framed = document.body.classList.contains("capture-375");
+      var box = framed ? document.getElementById("container") : document.documentElement;
+      var sw = box.scrollWidth;
+      var cw = framed ? 375 : document.documentElement.clientWidth;
+      var overflow = (sw > cw + 1) ? "あり" : "なし";
+      var el = document.getElementById("measure");
+      el.textContent = "測定: 基準幅=" + cw + "px, 内容の幅(scrollWidth)=" + sw + "px, 基準幅からはみ出す横スクロール=" + overflow;
+    }
+    applyFrame();
+    window.addEventListener("load", measure);
+    window.addEventListener("resize", measure);
+  </script>
+</body>
+</html>
