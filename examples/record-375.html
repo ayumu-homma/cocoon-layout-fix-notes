@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja" translate="no" class="notranslate">
+<head>
+  <meta charset="utf-8">
+  <meta name="google" content="notranslate">
+  <meta name="viewport" content="width=375">
+  <title>375px 修正前後の確認（公開サンプル）</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 375px;
+      height: 720px;
+      overflow: hidden;
+      background: #111;
+      font-family: "Noto Sans CJK JP", "Noto Sans JP", sans-serif;
+    }
+    #bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      color: #fff;
+      z-index: 10;
+      background: #b71c1c;
+    }
+    #bar.after { background: #1b5e20; }
+    #tag {
+      flex: 0 0 auto;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: rgba(255,255,255,.2);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    #cap { font-size: 13px; font-weight: 700; line-height: 1.35; }
+    #cap span {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.92;
+      margin-top: 2px;
+    }
+    iframe {
+      position: absolute;
+      top: 64px;
+      left: 0;
+      width: 375px;
+      height: 656px;
+      border: 0;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="bar">
+    <span id="tag">修正前</span>
+    <div id="cap">スマホ幅でページが横にずれます<span>内容幅を実測します</span></div>
+  </div>
+  <iframe id="view" src="repro-before.html" title="検証用ページ（顧客サイトではありません）"></iframe>
+  <script>
+    (function () {
+      var bar = document.getElementById("bar");
+      var tag = document.getElementById("tag");
+      var cap = document.getElementById("cap");
+      var view = document.getElementById("view");
+
+      function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+      function doc() { return view.contentDocument; }
+      function measure(d) {
+        var el = d.documentElement;
+        var sw = el.scrollWidth;
+        var cw = el.clientWidth;
+        return { sw: sw, cw: cw, overflow: sw > cw + 1 };
+      }
+      function setCaption(mode, m) {
+        if (mode === "before") {
+          bar.classList.remove("after");
+          tag.textContent = "修正前";
+          cap.innerHTML = "スマホ幅でページが横にずれます<span>内容幅 " + m.sw + "px / 枠 " + m.cw + "px　横スクロールあり</span>";
+        } else {
+          bar.classList.add("after");
+          tag.textContent = "修正後";
+          cap.innerHTML = "同じ375pxに収まり、横スクロールしません<span>内容幅 " + m.sw + "px / 枠 " + m.cw + "px　横スクロールなし</span>";
+        }
+      }
+      function animateScrollX(d, to, ms) {
+        var el = d.documentElement;
+        var start = el.scrollLeft;
+        var t0 = performance.now();
+        return new Promise(function (resolve) {
+          function step(now) {
+            var t = Math.min(1, (now - t0) / ms);
+            var ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            el.scrollLeft = start + (to - start) * ease;
+            if (t < 1) requestAnimationFrame(step);
+            else resolve();
+          }
+          requestAnimationFrame(step);
+        });
+      }
+      function onLoad() {
+        return new Promise(function (resolve) {
+          view.addEventListener("load", resolve, { once: true });
+        });
+      }
+
+      async function play() {
+        if (!(view.contentDocument && view.contentDocument.readyState === "complete")) {
+          await onLoad();
+        }
+        await wait(250);
+        var d = doc();
+        var m = measure(d);
+        setCaption("before", m);
+        await wait(800);
+        var max = Math.max(0, m.sw - m.cw);
+        await animateScrollX(d, max, 2400);
+        await wait(800);
+        await animateScrollX(d, 0, 700);
+        await wait(350);
+        var afterP = onLoad();
+        view.src = "repro-after.html";
+        await afterP;
+        await wait(250);
+        d = doc();
+        m = measure(d);
+        setCaption("after", m);
+        await animateScrollX(d, Math.max(80, m.sw - m.cw), 900);
+        await wait(400);
+        d.documentElement.scrollTop = 160;
+        await wait(2000);
+        document.documentElement.setAttribute("data-done", "1");
+      }
+      play();
+    })();
+  </script>
+</body>
+</html>
